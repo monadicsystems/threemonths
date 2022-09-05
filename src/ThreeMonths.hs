@@ -19,31 +19,67 @@ data Month = Month Week Week Week Week
 data Week = Week (Day Mon) (Day Tue) (Day Wed) (Day Thu) (Day Fri) (Day Sat) (Day Sun)
 
 data Mon
+
 data Tue
+
 data Wed
+
 data Thu
+
 data Fri
+
 data Sat
+
 data Sun
 
 data Day a = Day
-    { dayTasks :: [Text.Text]
-    , dayVideoLink :: Text.Text
-    , dayViewLink :: Text.Text
-    }
+  { dayTasks :: [Text.Text],
+    dayVideoLink :: Text.Text,
+    dayViewLink :: Text.Text
+  }
 
 firstMonth :: Month
-firstMonth = Month week week week week
+firstMonth = Month week1 week2 week3 week4
   where
-      week =
-          Week
-            (Day ["Do this and that", "Meditate"] "" "")
-            (Day [] "" "")
-            (Day [] "" "")
-            (Day [] "" "")
-            (Day [] "" "")
-            (Day [] "" "")
-            (Day [] "" "")
+    week1 =
+      Week
+        (Day ["Setup", "Prelude", "GHCi"] "" "")
+        (Day ["Base Types", "Lists", "Other Data Structures", "Patterns", "Recursion"] "" "")
+        (Day ["Custom Data Types", "Base Typeclasses", "Domain Modelling"] "" "")
+        (Day ["IO", "Reading Files", "Writing Files"] "" "")
+        (Day ["Pure Core <-> IO Shell", "File Formats Library: Cassava, Aeson, etc.", "Operating on CSV Files"] "" "")
+        (Day [] "" "")
+        (Day [] "" "")
+
+    week2 =
+      Week
+        (Day ["PROJECT: CLI for CSV Data"] "" "")
+        (Day ["PROJECT: CLI for CSV Data"] "" "")
+        (Day ["PROJECT: CLI for CSV Data"] "" "")
+        (Day ["PROJECT: CLI for CSV Data"] "" "")
+        (Day ["PROJECT: CLI for CSV Data"] "" "")
+        (Day [] "" "")
+        (Day [] "" "")
+
+    week3 =
+      Week
+        (Day ["WAI: Part I", "Review"] "" "")
+        (Day ["WAI: Part II", "Review"] "" "")
+        (Day ["WAI: Part III", "Review"] "" "")
+        (Day ["WAI: Part IV", "Review"] "" "")
+        (Day ["WAI: Part V", "Review"] "" "")
+        (Day [] "" "")
+        (Day [] "" "")
+
+    week4 =
+      Week
+        (Day [] "" "")
+        (Day [] "" "")
+        (Day [] "" "")
+        (Day [] "" "")
+        (Day [] "" "")
+        (Day [] "" "")
+        (Day [] "" "")
 
 homeHandler :: Okapi.MonadOkapi m => Okapi.Handler m
 homeHandler = do
@@ -67,7 +103,7 @@ homeHandler = do
 
     calendar :: LBS.ByteString
     calendar =
-        [Perl6.qq|
+      [Perl6.qq|
             <!-- This example requires Tailwind CSS v2.0+ -->
             <div class="lg:flex lg:h-full lg:flex-col">
                 $calendarHeader
@@ -193,7 +229,7 @@ homeHandler = do
                             <button type="button"
                                 class="flex items-center rounded-md border border-gray-300 bg-white py-2 pl-3 pr-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
                                 id="menu-button" aria-expanded="false" aria-haspopup="true">
-                                Month view
+                                Full-time
                                 <!-- Heroicon name: mini/chevron-down -->
                                 <svg class="ml-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                     fill="currentColor" aria-hidden="true">
@@ -218,13 +254,11 @@ homeHandler = do
                                 <div class="py-1" role="none">
                                     <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
                                     <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
-                                        id="menu-item-0">Day view</a>
+                                        id="menu-item-0">Part-time</a>
                                     <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
-                                        id="menu-item-1">Week view</a>
+                                        id="menu-item-1">Full-time</a>
                                     <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
-                                        id="menu-item-2">Month view</a>
-                                    <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
-                                        id="menu-item-3">Year view</a>
+                                        id="menu-item-2">Overtime</a>
                                 </div>
                             </div>
                         </div>
@@ -330,20 +364,21 @@ homeHandler = do
             </div>
         |]
 
-{-
-    <!--
-Always include: "relative py-2 px-3"
-Is current month, include: "bg-white"
-Is not current month, include: "bg-gray-50 text-gray-500"
--->
-                        <!--
-Is today, include: "flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white"
--->
-                            <time datetime="2022-01-12"
-                            class="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">12</time>
--}
+    {-
+        <!--
+    Always include: "relative py-2 px-3"
+    Is current month, include: "bg-white"
+    Is not current month, include: "bg-gray-50 text-gray-500"
+    -->
+                            <!--
+    Is today, include: "flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white"
+    -->
+                                <time datetime="2022-01-12"
+                                class="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">12</time>
+    -}
     dayTask :: Text.Text -> LBS.ByteString
-    dayTask task = [Perl6.qq|
+    dayTask task =
+      [Perl6.qq|
                 <li>
                     <a href="#" class="group flex">
                         <p class="flex-auto truncate font-medium text-gray-900 group-hover:text-indigo-600">$task</p>
@@ -354,38 +389,44 @@ Is today, include: "flex h-6 w-6 items-center justify-center rounded-full bg-ind
     |]
 
     dayTaskList :: [Text.Text] -> LBS.ByteString
-    dayTaskList [] = ""
+    dayTaskList [] = [Perl6.q|<p class="font-bold">OFF</p>|]
     dayTaskList tasks =
-        [Perl6.qq|
+      [Perl6.qq|
             <ol class="mt-2">
                 {foldMap dayTask tasks}
             </ol>
         |]
 
-    weekDaysFull :: Week -> LBS.ByteString
-    weekDaysFull (Week mon tue wed thu fri sat sun) =
-        [Perl6.qq|
+    weekDaysFull :: Week -> Int -> LBS.ByteString
+    weekDaysFull (Week mon tue wed thu fri sat sun) num =
+      [Perl6.qq|
             <div class="relative bg-white py-2 px-3">
-                <time datetime="2022-01-01"></time>
+                <time datetime="2022-01-01">DAY {1 + (num * 7)}</time>
                 {dayTaskList $ dayTasks mon}
             </div>
             <div class="relative bg-white py-2 px-3">
-                <time datetime="2022-01-01"></time>
+                <time datetime="2022-01-01">DAY {2 + (num * 7)}</time>
+                {dayTaskList $ dayTasks tue}
             </div>
             <div class="relative bg-white py-2 px-3">
-                <time datetime="2022-01-01"></time>
+                <time datetime="2022-01-01">DAY {3 + (num * 7)}</time>
+                {dayTaskList $ dayTasks wed}
             </div>
             <div class="relative bg-white py-2 px-3">
-                <time datetime="2022-01-01"></time>
+                <time datetime="2022-01-01">DAY {4 + (num * 7)}</time>
+                {dayTaskList $ dayTasks thu}
             </div>
             <div class="relative bg-white py-2 px-3">
-                <time datetime="2022-01-01"></time>
+                <time datetime="2022-01-01">DAY {5 + (num * 7)}</time>
+                {dayTaskList $ dayTasks fri}
             </div>
             <div class="relative bg-white py-2 px-3">
-                <time datetime="2022-01-01"></time>
+                <time datetime="2022-01-01">DAY {6 + (num * 7)}</time>
+                {dayTaskList $ dayTasks sat}
             </div>
             <div class="relative bg-white py-2 px-3">
-                <time datetime="2022-01-01"></time>
+                <time datetime="2022-01-01">DAY {7 + (num * 7)}</time>
+                {dayTaskList $ dayTasks sun}
             </div>
         |]
 
@@ -394,10 +435,10 @@ Is today, include: "flex h-6 w-6 items-center justify-center rounded-full bg-ind
       [Perl6.qq|
             <div class="flex bg-gray-200 text-xs leading-6 text-gray-700 lg:flex-auto">
                 <div class="hidden w-full lg:grid lg:grid-cols-7 lg:grid-rows-4 lg:gap-px">
-                    {weekDaysFull week1}
-                    {weekDaysFull week2}
-                    {weekDaysFull week3}
-                    {weekDaysFull week4}
+                    {weekDaysFull week1 0}
+                    {weekDaysFull week2 1}
+                    {weekDaysFull week3 2}
+                    {weekDaysFull week4 3}
                 </div>
             </div>
         |]
